@@ -3,21 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPU - Repositório Digital de Jurisprudência Eleitoral</title>
-    <!-- Tailwind CSS -->
+    <title>DPU - Repositório de Jurisprudência Eleitoral</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- SheetJS (XLSX) -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');<br/>
-        body { font-family: 'Inter', sans-serif; }<br/>
-        .scroll-smooth { scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
@@ -36,18 +32,15 @@
                 </div>
             </div>
             <div class="flex items-center gap-2 flex-wrap">
-                <input type="file" id="fileInput" accept=".xlsx, .xls" class="hidden" onchange="importarPlanilha(event)">
+                <input type="file" id="fileInput" accept=".xlsx,.xls" class="hidden" onchange="importarPlanilha(event)">
                 <button onclick="document.getElementById('fileInput').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition shadow-sm">
-                    <span class="material-icons text-sm">upload_file</span>
-                    <span>Carregar Planilha (XLSX)</span>
+                    <span class="material-icons text-sm">upload_file</span><span>Carregar Planilha</span>
                 </button>
                 <button onclick="exportarPlanilha()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition shadow-sm">
-                    <span class="material-icons text-sm">download</span>
-                    <span>Baixar Planilha</span>
+                    <span class="material-icons text-sm">download</span><span>Baixar Planilha</span>
                 </button>
                 <button onclick="exportarJSON()" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition shadow-sm">
-                    <span class="material-icons text-sm">backup</span>
-                    <span>Backup JSON</span>
+                    <span class="material-icons text-sm">backup</span><span>Backup JSON</span>
                 </button>
             </div>
         </div>
@@ -58,7 +51,7 @@
         <div class="max-w-7xl mx-auto flex items-start gap-3">
             <span class="material-icons text-blue-600 mt-0.5">info</span>
             <div class="text-xs text-blue-800 leading-relaxed">
-                <strong>Instruções:</strong> Carregue o arquivo oficial de dados para mapear os registros automaticamente. Todas as pesquisas geradas no Navegador Unificado utilizam o domínio oficial do TSE. Os dados são salvos automaticamente no seu navegador.
+                <strong>Instruções:</strong> Utilize o Navegador Unificado para pesquisas diretas no TSE/TREs. Na aba de Teses, utilize os filtros laterais por <strong>Tema</strong> e <strong>Peça Processual</strong> para refinar sua busca. Os dados são salvos automaticamente.
             </div>
         </div>
     </div>
@@ -67,27 +60,24 @@
     <div class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 flex gap-1">
             <button onclick="mudarAba('navegador')" id="btn-tab-navegador" class="py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-emerald-600 text-emerald-700">
-                <span class="material-icons text-base">explore</span>
-                <span>Navegador Unificado (TSE / TREs)</span>
+                <span class="material-icons text-base">explore</span><span>Navegador Unificado (TSE / TREs)</span>
             </button>
             <button onclick="mudarAba('teses')" id="btn-tab-teses" class="py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300">
-                <span class="material-icons text-base">style</span>
-                <span>Teses de Plantão (Cards Práticos)</span>
+                <span class="material-icons text-base">style</span><span>Teses de Plantão (Cards Práticos)</span>
             </button>
             <button onclick="mudarAba('sumulas')" id="btn-tab-sumulas" class="py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300">
-                <span class="material-icons text-base">gavel</span>
-                <span>Súmulas do TSE</span>
+                <span class="material-icons text-base">gavel</span><span>Súmulas do TSE</span>
             </button>
         </div>
     </div>
 
     <!-- CONTEÚDO -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
-        
+
         <!-- ABA 1: NAVEGADOR -->
         <section id="aba-navegador" class="block">
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 h-[calc(100vh-240px)] overflow-y-auto">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 h-[calc(100vh-280px)] overflow-y-auto custom-scroll">
                     <h3 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 px-2 flex items-center justify-between">
                         <span>Tribunal Alvo</span>
                         <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded text-[10px] font-normal" id="sigla-ativa">TSE</span>
@@ -97,13 +87,12 @@
                 <div class="lg:col-span-3 flex flex-col gap-4">
                     <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row gap-3 items-center">
                         <div class="relative w-full">
-                            <span class="absolute inset-y-0 left-3 flex items-center text-slate-400">
-                                <span class="material-icons">search</span>
-                            </span>
-                            <input type="text" id="busca-assunto" placeholder="Filtrar assunto específico..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm">
+                            <span class="absolute inset-y-0 left-3 flex items-center text-slate-400"><span class="material-icons">search</span></span>
+                            <input type="text" id="busca-assunto" oninput="debouncedRenderAssuntos()" placeholder="Filtrar assunto..." class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none text-sm">
                         </div>
+                        <div class="text-xs text-slate-400 whitespace-nowrap" id="total-assuntos">39 assuntos</div>
                     </div>
-                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex-grow overflow-y-auto max-h-[calc(100vh-310px)]">
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 flex-grow overflow-y-auto custom-scroll max-h-[calc(100vh-350px)]">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="grade-assuntos"></div>
                     </div>
                 </div>
@@ -116,19 +105,18 @@
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-6 h-fit">
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Pesquisa Avançada</h4>
-                        <input type="text" id="busca-tese" placeholder="Buscar nos cards..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <input type="text" id="busca-tese" oninput="debouncedRenderTeses()" placeholder="Buscar nos cards..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
                     </div>
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrar por Tema</h4>
-                        <div class="space-y-1 max-h-40 overflow-y-auto pr-1" id="filtros-temas-teses"></div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto custom-scroll pr-1" id="filtros-temas-teses"></div>
                     </div>
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Filtrar por Peça</h4>
-                        <div class="space-y-1 max-h-40 overflow-y-auto pr-1" id="filtros-pecas-teses"></div>
+                        <div class="space-y-1 max-h-40 overflow-y-auto custom-scroll pr-1" id="filtros-pecas-teses"></div>
                     </div>
                     <button onclick="abrirModalTese()" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition">
-                        <span class="material-icons text-sm">add_circle</span>
-                        <span>Cadastrar Nova Tese</span>
+                        <span class="material-icons text-sm">add_circle</span><span>Cadastrar Nova Tese</span>
                     </button>
                 </div>
                 <div class="lg:col-span-3 space-y-4" id="lista-cards-teses"></div>
@@ -141,11 +129,10 @@
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-6 h-fit">
                     <div>
                         <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Pesquisa Rápida</h4>
-                        <input type="text" id="busca-sumula" placeholder="Número ou enunciado..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
+                        <input type="text" id="busca-sumula" oninput="debouncedRenderSumulas()" placeholder="Número ou enunciado..." class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 outline-none">
                     </div>
                     <button onclick="abrirModalSumula()" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2 px-4 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition">
-                        <span class="material-icons text-sm">add</span>
-                        <span>Nova Súmula</span>
+                        <span class="material-icons text-sm">add</span><span>Nova Súmula</span>
                     </button>
                 </div>
                 <div class="lg:col-span-3 space-y-4" id="lista-cards-sumulas"></div>
@@ -160,52 +147,24 @@
                 <h3 class="font-bold text-lg" id="modal-tese-titulo">Cadastrar Nova Tese</h3>
                 <button onclick="fecharModalTese()" class="text-slate-400 hover:text-white transition"><span class="material-icons">close</span></button>
             </header>
-            <div class="p-6 overflow-y-auto space-y-4 flex-grow text-sm">
+            <div class="p-6 overflow-y-auto custom-scroll space-y-4 text-sm">
                 <input type="hidden" id="form-tese-id">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Código</label>
-                        <input type="text" id="form-tese-codigo" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Tema</label>
-                        <input type="text" id="form-tese-tema" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Título</label>
-                    <input type="text" id="form-tese-titulo-input" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Enunciado</label>
-                    <textarea id="form-tese-enunciado" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Destaque Fático (Chave de Ouro)</label>
-                    <textarea id="form-tese-fato" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Orientação Prática</label>
-                    <textarea id="form-tese-orientacao" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Fontes / Precedentes</label>
-                    <input type="text" id="form-tese-fontes" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+                    <div><label class="block font-semibold mb-1 text-slate-600">Código</label><input type="text" id="form-tese-codigo" placeholder="ex: ELEIT-PROC-001" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
+                    <div><label class="block font-semibold mb-1 text-slate-600">Tema</label><input type="text" id="form-tese-tema" placeholder="ex: Matéria Processual" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Link do Acórdão (URL)</label>
-                        <input type="url" id="form-tese-link" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block font-semibold mb-1 text-slate-600">Peça</label>
-                        <input type="text" id="form-tese-peca" placeholder="Ex: Resposta à Acusação" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                    </div>
+                    <div><label class="block font-semibold mb-1 text-slate-600">Título</label><input type="text" id="form-tese-titulo-input" placeholder="Título da tese" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
+                    <div><label class="block font-semibold mb-1 text-slate-600">Peça Processual</label><input type="text" id="form-tese-peca" placeholder="Ex: Resposta à Acusação, Alegações Finais" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
                 </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Tags</label>
-                    <input type="text" id="form-tese-tags" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
+                <div><label class="block font-semibold mb-1 text-slate-600">Enunciado da Tese</label><textarea id="form-tese-enunciado" rows="3" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea></div>
+                <div><label class="block font-semibold mb-1 text-slate-600">Destaque Fático (Chave de Ouro)</label><textarea id="form-tese-fato" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea></div>
+                <div><label class="block font-semibold mb-1 text-slate-600">Orientação Prática</label><textarea id="form-tese-orientacao" rows="2" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea></div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="block font-semibold mb-1 text-slate-600">Fontes / Precedentes</label><input type="text" id="form-tese-fontes" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
+                    <div><label class="block font-semibold mb-1 text-slate-600">Link do Acórdão (URL)</label><input type="url" id="form-tese-link" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
                 </div>
+                <div><label class="block font-semibold mb-1 text-slate-600">Tags (separadas por vírgula)</label><input type="text" id="form-tese-tags" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
             </div>
             <footer class="bg-slate-50 px-6 py-4 border-t border-slate-150 flex justify-end gap-2">
                 <button onclick="fecharModalTese()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition">Cancelar</button>
@@ -223,14 +182,8 @@
             </header>
             <div class="p-6 space-y-4 text-sm">
                 <input type="hidden" id="form-sumula-id">
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Número</label>
-                    <input type="number" id="form-sumula-numero" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
-                <div>
-                    <label class="block font-semibold mb-1 text-slate-600">Enunciado</label>
-                    <textarea id="form-sumula-enunciado" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
-                </div>
+                <div><label class="block font-semibold mb-1 text-slate-600">Número</label><input type="number" id="form-sumula-numero" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></div>
+                <div><label class="block font-semibold mb-1 text-slate-600">Enunciado</label><textarea id="form-sumula-enunciado" rows="4" class="w-full px-3 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-emerald-500"></textarea></div>
             </div>
             <footer class="bg-slate-50 px-6 py-4 border-t border-slate-150 flex justify-end gap-2">
                 <button onclick="fecharModalSumula()" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-100 transition">Cancelar</button>
@@ -242,368 +195,294 @@
     <!-- TOAST -->
     <div id="toast" class="fixed bottom-6 right-6 bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300 z-50 text-sm">
         <span class="material-icons text-emerald-400" id="toast-icon">check_circle</span>
-        <span id="toast-message">Registro atualizado!</span>
+        <span id="toast-message">Operação realizada!</span>
     </div>
 
     <script>
-        // --- DADOS E ESTADO ---
+        const STORAGE_KEY = 'repositorioDPU';
+        let tribunalSelecionado = "TSE";
+        let filtroTemaAtivo = "Todas";
+        let filtroPecaAtivo = "Todas";
+
         const tribunais = [
-            { sigla: "TSE", nome: "Tribunal Superior Eleitoral" },<br/>
-            { sigla: "TRE-AC", nome: "Acre" }, { sigla: "TRE-AL", nome: "Alagoas" }, { sigla: "TRE-AM", nome: "Amazonas" },<br/>
-            { sigla: "TRE-AP", nome: "Amapá" }, { sigla: "TRE-BA", nome: "Bahia" }, { sigla: "TRE-CE", nome: "Ceará" },<br/>
-            { sigla: "TRE-DF", nome: "Distrito Federal" }, { sigla: "TRE-ES", nome: "Espírito Santo" }, { sigla: "TRE-GO", nome: "Goiás" },<br/>
-            { sigla: "TRE-MA", nome: "Maranhão" }, { sigla: "TRE-MG", nome: "Minas Gerais" }, { sigla: "TRE-MS", nome: "Mato Grosso do Sul" },<br/>
-            { sigla: "TRE-MT", nome: "Mato Grosso" }, { sigla: "TRE-PA", nome: "Pará" }, { sigla: "TRE-PB", nome: "Paraíba" },<br/>
-            { sigla: "TRE-PE", nome: "Pernambuco" }, { sigla: "TRE-PI", nome: "Piauí" }, { sigla: "TRE-PR", nome: "Paraná" },<br/>
-            { sigla: "TRE-RJ", nome: "Rio de Janeiro" }, { sigla: "TRE-RN", nome: "Rio Grande do Norte" }, { sigla: "TRE-RO", nome: "Rondônia" },<br/>
-            { sigla: "TRE-RR", nome: "Roraima" }, { sigla: "TRE-RS", nome: "Rio Grande do Sul" }, { sigla: "TRE-SC", nome: "Santa Catarina" },<br/>
-            { sigla: "TRE-SE", nome: "Sergipe" }, { sigla: "TRE-SP", nome: "São Paulo" }, { sigla: "TRE-TO", nome: "Tocantins" }
+            { sigla: "TSE", nome: "Tribunal Superior Eleitoral" },
+            { sigla: "TRE-AC", nome: "Acre" }, { sigla: "TRE-AL", nome: "Alagoas" },
+            { sigla: "TRE-AM", nome: "Amazonas" }, { sigla: "TRE-AP", nome: "Amapá" },
+            { sigla: "TRE-BA", nome: "Bahia" }, { sigla: "TRE-CE", nome: "Ceará" },
+            { sigla: "TRE-DF", nome: "Distrito Federal" }, { sigla: "TRE-ES", nome: "Espírito Santo" },
+            { sigla: "TRE-GO", nome: "Goiás" }, { sigla: "TRE-MA", nome: "Maranhão" },
+            { sigla: "TRE-MG", nome: "Minas Gerais" }, { sigla: "TRE-MS", nome: "Mato Grosso do Sul" },
+            { sigla: "TRE-MT", nome: "Mato Grosso" }, { sigla: "TRE-PA", nome: "Pará" },
+            { sigla: "TRE-PB", nome: "Paraíba" }, { sigla: "TRE-PE", nome: "Pernambuco" },
+            { sigla: "TRE-PI", nome: "Piauí" }, { sigla: "TRE-PR", nome: "Paraná" },
+            { sigla: "TRE-RJ", nome: "Rio de Janeiro" }, { sigla: "TRE-RN", nome: "Rio Grande do Norte" },
+            { sigla: "TRE-RO", nome: "Rondônia" }, { sigla: "TRE-RR", nome: "Roraima" },
+            { sigla: "TRE-RS", nome: "Rio Grande do Sul" }, { sigla: "TRE-SC", nome: "Santa Catarina" },
+            { sigla: "TRE-SE", nome: "Sergipe" }, { sigla: "TRE-SP", nome: "São Paulo" },
+            { sigla: "TRE-TO", nome: "Tocantins" }
         ];
 
         const assuntos = [
-            { nome: "Domicílio Eleitoral", volume: 620 }, { nome: "Registro De Candidatura", volume: 201 },<br/>
-            { nome: "Inelegibilidade", volume: 177 }, { nome: "Matéria Processual", volume: 137 },<br/>
-            { nome: "Matéria Administrativa", volume: 124 }, { nome: "Alistamento Eleitoral", volume: 39 },<br/>
-            { nome: "Condições De Elegibilidade", volume: 30 }, { nome: "Crime Eleitoral", volume: 26 },<br/>
-            { nome: "Consulta", volume: 21 }, { nome: "Abuso De Poder", volume: 11 },<br/>
-            { nome: "Doação", volume: 10 }, { nome: "Instruções Eleições", volume: 10 },<br/>
-            { nome: "Aije", volume: 9 }, { nome: "Captação De Sufrágio", volume: 9 },<br/>
-            { nome: "Habeas Corpus", volume: 9 }, { nome: "Intempestividade", volume: 8 },<br/>
-            { nome: "Apuração/totalização De Votos", volume: 4 }, { nome: "Filiação Partidária", volume: 4 },<br/>
-            { nome: "Recurso Em Habeas Corpus", volume: 4 }, { nome: "Condutas Vedadas A Agente Público", volume: 3 },<br/>
-            { nome: "Contas De Campanha", volume: 3 }, { nome: "Desincompatibilização", volume: 3 },<br/>
-            { nome: "Direito De Resposta", volume: 3 }, { nome: "Eleição Suplementar", volume: 3 },<br/>
-            { nome: "Mandado De Segurança", volume: 3 }, { nome: "Aime", volume: 2 },<br/>
-            { nome: "Criação De Zona Eleitoral", volume: 2 }, { nome: "Lista Tríplice", volume: 2 },<br/>
-            { nome: "Partido Político", volume: 2 }, { nome: "Propaganda Eleitoral Irregular", volume: 2 },<br/>
-            { nome: "Contas De Exercício Financeiro", volume: 1 }, { nome: "Cota Gênero", volume: 1 },<br/>
-            { nome: "Execução Fiscal", volume: 1 }, { nome: "Fundo Partidário", volume: 1 },<br/>
-            { nome: "Pesquisa Eleitoral", volume: 1 }, { nome: "Propaganda Eleitoral Antecipada", volume: 1 },<br/>
-            { nome: "Recurso Em Mandado De Segurança", volume: 1 }, { nome: "Resolução", volume: 1 },<br/>
+            { nome: "Domicílio Eleitoral", volume: 620 }, { nome: "Registro De Candidatura", volume: 201 },
+            { nome: "Inelegibilidade", volume: 177 }, { nome: "Matéria Processual", volume: 137 },
+            { nome: "Matéria Administrativa", volume: 124 }, { nome: "Alistamento Eleitoral", volume: 39 },
+            { nome: "Condições De Elegibilidade", volume: 30 }, { nome: "Crime Eleitoral", volume: 26 },
+            { nome: "Consulta", volume: 21 }, { nome: "Abuso De Poder", volume: 11 },
+            { nome: "Doação", volume: 10 }, { nome: "Instruções Eleições", volume: 10 },
+            { nome: "Aije", volume: 9 }, { nome: "Captação De Sufrágio", volume: 9 },
+            { nome: "Habeas Corpus", volume: 9 }, { nome: "Intempestividade", volume: 8 },
+            { nome: "Apuração/totalização De Votos", volume: 4 }, { nome: "Filiação Partidária", volume: 4 },
+            { nome: "Recurso Em Habeas Corpus", volume: 4 }, { nome: "Condutas Vedadas", volume: 3 },
+            { nome: "Contas De Campanha", volume: 3 }, { nome: "Desincompatibilização", volume: 3 },
+            { nome: "Direito De Resposta", volume: 3 }, { nome: "Eleição Suplementar", volume: 3 },
+            { nome: "Mandado De Segurança", volume: 3 }, { nome: "Aime", volume: 2 },
+            { nome: "Criação De Zona Eleitoral", volume: 2 }, { nome: "Lista Tríplice", volume: 2 },
+            { nome: "Partido Político", volume: 2 }, { nome: "Propaganda Irregular", volume: 2 },
+            { nome: "Contas Exercício Financeiro", volume: 1 }, { nome: "Cota Gênero", volume: 1 },
+            { nome: "Execução Fiscal", volume: 1 }, { nome: "Fundo Partidário", volume: 1 },
+            { nome: "Pesquisa Eleitoral", volume: 1 }, { nome: "Propaganda Antecipada", volume: 1 },
+            { nome: "Recurso Mandado Segurança", volume: 1 }, { nome: "Resolução", volume: 1 },
             { nome: "Assunto não especificado", volume: 899 }
         ];
 
         let dbTeses = [
-            { id: "1", codigo: "ELEIT-REG-001", tema: "Registro de Candidatura", titulo: "Domicílio Eleitoral – Flexibilidade do Vínculo", enunciado: "O conceito de domicílio eleitoral não se confunde com o domicílio civil, sendo consideravelmente mais amplo, bastando a comprovação de vínculos de natureza afetiva, familiar, comunitária ou patrimonial.", fato: "Candidato do interior que demonstrou posse de pequena gleba de terras rurais de herança familiar e participação histórica em festividades da paróquia local.", orientacao: "Reunir contas de utilidades do imóvel e declarações de associação de produtores para comprovação ampla de vínculo local.", fontes: "TSE - Súmula 58, TRE-MG - RE 0600123-45", tags: "Domicílio, Vínculo, Terra", link: "", peca: "Resposta à Acusação" },<br/>
-            { id: "2", codigo: "ELEIT-REG-002", tema: "Registro de Candidatura", titulo: "Desincompatibilização – Afastamento de Fato", enunciado: "O afastamento fático das funções laborais de servidor público afasta qualquer alegação de inelegibilidade, sendo irrelevante a ausência de publicação administrativa da licença.", fato: "A prefeitura demorou trinta dias para processar a portaria oficial de licença do motorista municipal, mas o ponto fático prova a parada das atividades.", orientacao: "Juntar protocolo de requisição de licença e folha de escalas fáticas sem a presença do candidato.", fontes: "TSE - Rec. Especial 0600089-76, TRE-CE - RE 0600551", tags: "Licença, Servidor, Afastamento", link: "", peca: "Resposta à Acusação" },<br/>
-            { id: "3", codigo: "ELEIT-REG-003", tema: "Registro de Candidatura", titulo: "Comprovação de Escolaridade – Presunção de CNH", enunciado: "A apresentação de Carteira Nacional de Habilitação (CNH) em prazo recursal gera presunção jurídica de alfabetização exigida pela Constituição.", fato: "Candidato analfabeto funcional que possui carteira de motorista emitida pelo órgão de trânsito competente.", orientacao: "Invocar a presunção legal do documento público para afastar exigência de realização de testes de leitura humilhantes no cartório.", fontes: "TSE - Súmula 55, TRE-MA - RE 0600789", tags: "Escolaridade, CNH, Alfabeto", link: "", peca: "Resposta à Acusação" }
+            { id: "1", codigo: "ELEIT-REG-001", tema: "Registro de Candidatura", peca: "Resposta à Acusação", titulo: "Domicílio Eleitoral – Flexibilidade do Vínculo", enunciado: "O conceito de domicílio eleitoral não se confunde com o domicílio civil, sendo consideravelmente mais amplo, bastando a comprovação de vínculos afetivos, familiares, comunitários ou patrimoniais.", fato: "Candidato demonstrou posse de gleba rural de herança familiar e participação em festividades locais.", orientacao: "Reunir contas de utilidades e declarações de associação para comprovação de vínculo local.", fontes: "TSE - Súmula 58, TRE-MG - RE 0600123-45", link: "", tags: "Domicílio, Vínculo" },
+            { id: "2", codigo: "ELEIT-REG-002", tema: "Registro de Candidatura", peca: "Resposta à Acusação", titulo: "Desincompatibilização – Afastamento de Fato", enunciado: "O afastamento fático das funções de servidor público afasta a inelegibilidade, sendo irrelevante a ausência de publicação administrativa da licença.", fato: "Prefeitura demorou a processar a portaria de licença, mas o ponto fático prova a parada das atividades.", orientacao: "Juntar protocolo de requisição de licença e folha de escalas sem a presença do candidato.", fontes: "TSE - Rec. Especial 0600089-76, TRE-CE - RE 0600551", link: "", tags: "Licença, Servidor" },
+            { id: "3", codigo: "ELEIT-REG-003", tema: "Registro de Candidatura", peca: "Resposta à Acusação", titulo: "Comprovação de Escolaridade – Presunção de CNH", enunciado: "A apresentação de CNH gera presunção jurídica de alfabetização exigida pela Constituição.", fato: "Candidato analfabeto funcional que possui CNH emitida pelo órgão de trânsito.", orientacao: "Invocar a presunção legal do documento público para afastar exigência de testes de leitura.", fontes: "TSE - Súmula 55, TRE-MA - RE 0600789", link: "", tags: "Escolaridade, CNH" }
         ];
 
         let dbSumulas = [
-            { id: "1", numero: 55, enunciado: "A Carteira Nacional de Habilitação (CNH) gera a presunção da escolaridade indispensável ao registro de candidatura." },<br/>
-            { id: "2", numero: 58, enunciado: "O conceito de domicílio eleitoral não se confunde com o de domicílio civil, bastando para a sua configuração a existência de vínculo político, econômico, social ou familiar." },<br/>
+            { id: "1", numero: 55, enunciado: "A CNH gera a presunção da escolaridade indispensável ao registro de candidatura." },
+            { id: "2", numero: 58, enunciado: "O conceito de domicílio eleitoral não se confunde com o de domicílio civil, bastando para a sua configuração a existência de vínculo político, econômico, social ou familiar." },
             { id: "3", numero: 45, enunciado: "A rejeição de contas pelo órgão competente que configure ato doloso de improbidade administrativa afasta a elegibilidade." }
         ];
 
-        let tribunalSelecionado = "TSE";
-        let filtroTemaAtivo = "Todos";
-        let filtroPecaAtivo = "Todas";
-
-        // --- PERSISTÊNCIA ---
-        function carregarLocalStorage() {
-            const salvos = localStorage.getItem('repositorioDPU');
+        function carregarDados() {
+            const salvos = localStorage.getItem(STORAGE_KEY);
             if (salvos) {
-                const parsed = JSON.parse(salvos);
-                dbTeses = parsed.teses || dbTeses;
-                dbSumulas = parsed.sumulas || dbSumulas;
-                atualizarStatusSalvo(true);
+                try {
+                    const data = JSON.parse(salvos);
+                    if (data.teses) dbTeses = data.teses;
+                    if (data.sumulas) dbSumulas = data.sumulas;
+                } catch(e) {}
             }
         }
 
         function salvarDados() {
-            localStorage.setItem('repositorioDPU', JSON.stringify({ teses: dbTeses, sumulas: dbSumulas }));
-            atualizarStatusSalvo(true);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ teses: dbTeses, sumulas: dbSumulas }));
+            document.getElementById('status-save').textContent = '✓ dados salvos';
+            document.getElementById('status-save').className = 'text-xs text-emerald-300';
         }
 
-        function atualizarStatusSalvo(salvo) {
-            const el = document.getElementById('status-save');
-            if (salvo) {
-                el.textContent = "✓ dados salvos";
-                el.className = "text-xs text-emerald-300";
-            } else {
-                el.textContent = "⚠ alterações não salvas";
-                el.className = "text-xs text-amber-300";
-            }
-        }
-
-        // --- UTILITÁRIOS ---
-        function debounce(fn, delay) {
-            let timer;
-            return function(...args) {
-                clearTimeout(timer);
-                timer = setTimeout(() => fn.apply(this, args), delay);
-            };
-        }
+        function debounce(fn, d) { let t; return function(...a) { clearTimeout(t); t = setTimeout(() => fn.apply(this, a), d); }; }
 
         function mostrarToast(msg, erro = false) {
             const t = document.getElementById('toast');
-            const icon = document.getElementById('toast-icon');
             document.getElementById('toast-message').textContent = msg;
-            icon.textContent = erro ? 'error' : 'check_circle';<br/>
-            icon.className = erro ? 'material-icons text-red-500' : 'material-icons text-emerald-400';
+            const ic = document.getElementById('toast-icon');
+            ic.textContent = erro ? 'error' : 'check_circle';
+            ic.className = erro ? 'material-icons text-red-400' : 'material-icons text-emerald-400';
             t.classList.remove('translate-y-20', 'opacity-0');
             setTimeout(() => t.classList.add('translate-y-20', 'opacity-0'), 3000);
         }
 
-        function copiarTexto(txt) {
-            navigator.clipboard.writeText(txt).then(() => mostrarToast("Copiado para a área de transferência!"));
-        }
-
-        // --- NAVEGAÇÃO ---
         function mudarAba(aba) {
-            ['navegador', 'teses', 'sumulas'].forEach(a => {
-                document.getElementById(`aba-${a}`).classList.add('hidden');
-                document.getElementById(`btn-tab-${a}`).className = "py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300";
+            ['navegador','teses','sumulas'].forEach(a => {
+                document.getElementById('aba-'+a).classList.add('hidden');
+                document.getElementById('btn-tab-'+a).className = "py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300";
             });
-            document.getElementById(`aba-${aba}`).classList.remove('hidden');
-            document.getElementById(`btn-tab-${aba}`).className = "py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-emerald-600 text-emerald-700";
+            document.getElementById('aba-'+aba).classList.remove('hidden');
+            document.getElementById('btn-tab-'+aba).className = "py-4 px-5 border-b-2 font-semibold text-sm flex items-center gap-2 transition-all border-emerald-600 text-emerald-700";
         }
 
-        // --- ABA 1: NAVEGADOR ---
-        function renderizarTribunais() {
-            const container = document.getElementById('lista-tribunais');
-            container.innerHTML = tribunais.map(t => `
-                <button onclick="selecionarTribunal('${t.sigla}')" class="w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition ${t.sigla === tribunalSelecionado ? 'bg-emerald-50 text-emerald-800 border-l-4 border-emerald-600' : 'text-slate-600 hover:bg-slate-100'}">
-                    <span class="truncate">${t.sigla} - ${t.nome}</span>
-                    ${t.sigla === tribunalSelecionado ? '<span class="material-icons text-xs">check</span>' : ''}
-                </button>
-            `).join('');
+        function renderTribunais() {
+            const c = document.getElementById('lista-tribunais'); c.innerHTML = '';
+            tribunais.forEach(t => {
+                const sel = t.sigla === tribunalSelecionado;
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-3 py-2.5 rounded-lg text-xs font-semibold flex items-center justify-between transition ${sel ? 'bg-emerald-50 text-emerald-800 border-l-4 border-emerald-600' : 'text-slate-600 hover:bg-slate-100'}`;
+                btn.onclick = () => { tribunalSelecionado = t.sigla; document.getElementById('sigla-ativa').textContent = t.sigla; renderTribunais(); renderAssuntos(); };
+                btn.innerHTML = `<span class="truncate">${t.sigla} - ${t.nome}</span>${sel ? '<span class="material-icons text-xs text-emerald-600">check</span>' : ''}`;
+                c.appendChild(btn);
+            });
         }
 
-        function selecionarTribunal(sigla) {
-            tribunalSelecionado = sigla;
-            document.getElementById('sigla-ativa').textContent = sigla;
-            renderizarTribunais();
-            renderizarAssuntos();
-        }
-
-        function renderizarAssuntos() {
+        function renderAssuntos() {
             const busca = document.getElementById('busca-assunto').value.toLowerCase();
-            const container = document.getElementById('grade-assuntos');
-            const filtrados = assuntos.filter(a => a.nome.toLowerCase().includes(busca));
-            
-            container.innerHTML = filtrados.map(a => {
-                const query = encodeURIComponent(`"${tribunalSelecionado}" "${a.nome}"`);
-                const url = `https://jurisprudencia-tres.tse.jus.br/#/jurisprudencia/pesquisa?expressaoLivre=${query}&params=s`;
-                return `
-                    <div class="bg-white border border-slate-200 p-4 rounded-xl flex flex-col justify-between gap-3 shadow-sm hover:shadow-md transition">
-                        <div>
-                            <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-1">
-                                <span>TSE</span>
-                                <span>${a.volume} REGISTROS</span>
-                            </div>
-                            <h4 class="font-bold text-slate-800 text-sm">${a.nome}</h4>
-                        </div>
-                        <div class="flex gap-2">
-                            <a href="${url}" target="_blank" class="flex-grow bg-emerald-600 text-white text-center py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 hover:bg-emerald-700 transition">
-                                <span class="material-icons text-sm">search</span> Pesquisar
-                            </a>
-                            <button onclick="copiarTexto('${url}')" class="bg-slate-100 p-2 rounded-lg text-slate-600 hover:bg-slate-200 transition">
-                                <span class="material-icons text-sm">link</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            const c = document.getElementById('grade-assuntos'); c.innerHTML = '';
+            const f = assuntos.filter(a => a.nome.toLowerCase().includes(busca));
+            document.getElementById('total-assuntos').textContent = f.length + ' assuntos encontrados';
+            f.forEach(a => {
+                const url = `https://jurisprudencia-tres.tse.jus.br/#/jurisprudencia/pesquisa?expressaoLivre=${encodeURIComponent('"'+tribunalSelecionado+'" "'+a.nome+'"')}&params=s`;
+                const d = document.createElement('div');
+                d.className = "bg-white border border-slate-200 p-4 rounded-xl flex flex-col justify-between gap-3 shadow-sm hover:shadow-md transition";
+                d.innerHTML = `<div><div class="flex justify-between mb-1"><span class="text-[10px] font-bold text-slate-400 uppercase">Assunto</span><span class="text-[10px] text-slate-400">${a.volume} reg.</span></div><h4 class="font-bold text-slate-800 text-sm">${a.nome}</h4></div><a href="${url}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-center py-2 rounded-lg text-xs font-bold flex items-center justify-center gap-1 transition shadow-sm"><span class="material-icons text-sm">search</span>Pesquisar no TSE</a>`;
+                c.appendChild(d);
+            });
         }
 
-        // --- ABA 2: TESES ---
         function atualizarFiltrosDinamicos() {
-            const temas = ["Todos", ...new Set(dbTeses.map(t => t.tema))];
-            const pecas = ["Todas", ...new Set(dbTeses.map(t => t.peca || "Geral"))];
-
-            document.getElementById('filtros-temas-teses').innerHTML = temas.map(t => `
-                <button onclick="setFiltroTema('${t}')" class="w-full text-left px-2 py-1 rounded text-xs transition ${filtroTemaAtivo === t ? 'bg-emerald-100 text-emerald-800 font-bold' : 'text-slate-500 hover:bg-slate-100'}">
-                    ${t}
-                </button>
-            `).join('');
-
-            document.getElementById('filtros-pecas-teses').innerHTML = pecas.map(p => `
-                <button onclick="setFiltroPeca('${p}')" class="w-full text-left px-2 py-1 rounded text-xs transition ${filtroPecaAtivo === p ? 'bg-blue-100 text-blue-800 font-bold' : 'text-slate-500 hover:bg-slate-100'}">
-                    ${p}
-                </button>
-            `).join('');
-        }
-
-        function setFiltroTema(t) { filtroTemaAtivo = t; renderizarTeses(); atualizarFiltrosDinamicos(); }
-        function setFiltroPeca(p) { filtroPecaAtivo = p; renderizarTeses(); atualizarFiltrosDinamicos(); }
-
-        function renderizarTeses() {
-            const busca = document.getElementById('busca-tese').value.toLowerCase();
-            const container = document.getElementById('lista-cards-teses');
-            
-            const filtradas = dbTeses.filter(t => {
-                const matchTexto = t.titulo.toLowerCase().includes(busca) || t.enunciado.toLowerCase().includes(busca) || t.fato.toLowerCase().includes(busca);
-                const matchTema = filtroTemaAtivo === "Todos" || t.tema === filtroTemaAtivo;
-                const matchPeca = filtroPecaAtivo === "Todas" || (t.peca || "Geral") === filtroPecaAtivo;
-                return matchTexto && matchTema && matchPeca;
+            const temasCont = document.getElementById('filtros-temas-teses');
+            const temas = ["Todas", ...new Set(dbTeses.map(t => t.tema))];
+            temasCont.innerHTML = '';
+            temas.forEach(t => {
+                const b = document.createElement('button');
+                b.className = `w-full text-left px-2 py-1 rounded text-xs transition ${filtroTemaAtivo === t ? 'bg-slate-200 text-slate-800 font-bold' : 'text-slate-500 hover:bg-slate-100'}`;
+                b.onclick = () => { filtroTemaAtivo = t; atualizarFiltrosDinamicos(); renderTeses(); };
+                b.textContent = t;
+                temasCont.appendChild(b);
             });
 
-            container.innerHTML = filtradas.map(t => `
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition">
+            const pecasCont = document.getElementById('filtros-pecas-teses');
+            const pecas = ["Todas", ...new Set(dbTeses.map(t => t.peca || "Geral"))];
+            pecasCont.innerHTML = '';
+            pecas.forEach(p => {
+                const b = document.createElement('button');
+                b.className = `w-full text-left px-2 py-1 rounded text-xs transition ${filtroPecaAtivo === p ? 'bg-slate-200 text-slate-800 font-bold' : 'text-slate-500 hover:bg-slate-100'}`;
+                b.onclick = () => { filtroPecaAtivo = p; atualizarFiltrosDinamicos(); renderTeses(); };
+                b.textContent = p;
+                pecasCont.appendChild(b);
+            });
+        }
+
+        function renderTeses() {
+            const busca = document.getElementById('busca-tese').value.toLowerCase();
+            const c = document.getElementById('lista-cards-teses'); c.innerHTML = '';
+            const filtradas = dbTeses.filter(t => {
+                const mt = filtroTemaAtivo === "Todas" || t.tema === filtroTemaAtivo;
+                const mp = filtroPecaAtivo === "Todas" || (t.peca || "Geral") === filtroPecaAtivo;
+                const mb = (t.titulo||'').toLowerCase().includes(busca) || (t.enunciado||'').toLowerCase().includes(busca) || (t.fato||'').toLowerCase().includes(busca);
+                return mt && mp && mb;
+            });
+            filtradas.forEach(t => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition";
+                const lh = t.link ? `<a href="${t.link}" target="_blank" class="ml-2 text-emerald-600 hover:underline inline-flex items-center gap-0.5 text-[10px]"><span class="material-icons text-[12px]">link</span>Acórdão</a>` : '';
+                card.innerHTML = `
                     <div class="bg-slate-900 text-white px-4 py-2.5 flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <span class="bg-emerald-600 text-[10px] font-bold px-1.5 py-0.5 rounded">${t.codigo}</span>
-                            <span class="text-[10px] text-slate-400 uppercase tracking-widest">${t.tema}</span>
+                            <span class="text-[10px] text-slate-300 uppercase">${t.tema}</span>
                         </div>
-                        <div class="flex gap-1">
-                            <button onclick="editarTese('${t.id}')" class="p-1 hover:text-emerald-400 transition"><span class="material-icons text-sm">edit</span></button>
-                            <button onclick="excluirTese('${t.id}')" class="p-1 hover:text-red-400 transition"><span class="material-icons text-sm">delete</span></button>
+                        <div class="flex items-center gap-2">
+                            <span class="flex items-center gap-1 text-[10px] text-emerald-200 bg-white/10 px-2 py-0.5 rounded-full">
+                                <span class="material-icons text-[12px]">description</span>${t.peca || 'Geral'}
+                            </span>
+                            <button onclick="editarTese('${t.id}')" class="hover:text-emerald-400 transition p-1"><span class="material-icons text-sm">edit</span></button>
+                            <button onclick="excluirTese('${t.id}')" class="hover:text-red-400 transition p-1"><span class="material-icons text-sm">delete</span></button>
                         </div>
                     </div>
                     <div class="p-4 space-y-3">
-                        <div class="flex items-center gap-2 text-[10px] font-bold text-slate-400">
-                            <span class="bg-slate-100 px-2 py-0.5 rounded flex items-center gap-1">
-                                <span class="material-icons text-[12px]">description</span> ${t.peca || 'Geral'}
-                            </span>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-base leading-tight">${t.titulo}</h3>
-                        <p class="text-sm text-slate-600 leading-relaxed">${t.enunciado}</p>
-                        <div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r-lg">
-                            <span class="text-[10px] font-bold text-amber-800 uppercase block mb-1">Chave de Ouro (Destaque Fático)</span>
+                        <h3 class="font-bold text-slate-800 text-sm">${t.titulo}</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed">${t.enunciado}</p>
+                        <div class="bg-amber-50 border-l-4 border-amber-400 p-3 rounded-r">
+                            <strong class="text-[10px] text-amber-800 uppercase block mb-1"><span class="material-icons text-xs">vpn_key</span> Chave de Ouro</strong>
                             <p class="text-xs text-amber-900">${t.fato}</p>
                         </div>
-                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded-r-lg">
-                            <span class="text-[10px] font-bold text-emerald-800 uppercase block mb-1">Estratégia de Atuação Prática</span>
+                        <div class="bg-emerald-50 border-l-4 border-emerald-500 p-3 rounded-r">
+                            <strong class="text-[10px] text-emerald-800 uppercase block mb-1"><span class="material-icons text-xs">tips_and_updates</span> Estratégia</strong>
                             <p class="text-xs text-emerald-900">${t.orientacao}</p>
                         </div>
-                        <div class="pt-2 border-t border-slate-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-                            <div class="text-[11px] text-slate-500">
-                                <strong>Fontes:</strong> ${t.fontes}
-                                ${t.link ? `<a href="${t.link}" target="_blank" class="ml-2 text-emerald-600 hover:underline inline-flex items-center gap-0.5"><span class="material-icons text-[12px]">open_in_new</span> Acórdão</a>` : ''}
-                            </div>
-                            <button onclick="copiarTexto('${t.enunciado.replace(/'/g, "\'")}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs py-1.5 px-3 rounded-lg font-bold flex items-center gap-1 transition">
-                                <span class="material-icons text-xs">content_copy</span> Copiar Precedente
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+                            <span class="text-[10px] text-slate-400 truncate"><strong>Fontes:</strong> ${t.fontes}${lh}</span>
+                            <button onclick="copiarTese('${t.id}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded text-[10px] font-bold flex items-center gap-1 transition">
+                                <span class="material-icons text-xs">content_copy</span> Copiar
                             </button>
                         </div>
-                    </div>
-                </div>
-            `).join('');
+                    </div>`;
+                c.appendChild(card);
+            });
         }
 
-        // --- CRUD TESES ---
         function abrirModalTese() {
             document.getElementById('modal-tese-titulo').textContent = "Cadastrar Nova Tese";
-            document.getElementById('form-tese-id').value = "";
-            ['codigo', 'tema', 'titulo-input', 'enunciado', 'fato', 'orientacao', 'fontes', 'link', 'peca', 'tags'].forEach(f => document.getElementById(`form-tese-${f}`).value = "");
+            document.getElementById('form-tese-id').value = '';
+            ['codigo','tema','titulo-input','peca','enunciado','fato','orientacao','fontes','link','tags'].forEach(f => document.getElementById('form-tese-'+f).value = '');
             document.getElementById('modal-tese').classList.remove('hidden');
         }
-
         function fecharModalTese() { document.getElementById('modal-tese').classList.add('hidden'); }
 
         function guardarTese() {
             const id = document.getElementById('form-tese-id').value;
-            const tese = {
-                id: id || Date.now().toString(),<br/>
-                codigo: document.getElementById('form-tese-codigo').value,<br/>
-                tema: document.getElementById('form-tese-tema').value,<br/>
-                titulo: document.getElementById('form-tese-titulo-input').value,<br/>
-                enunciado: document.getElementById('form-tese-enunciado').value,<br/>
-                fato: document.getElementById('form-tese-fato').value,<br/>
-                orientacao: document.getElementById('form-tese-orientacao').value,<br/>
-                fontes: document.getElementById('form-tese-fontes').value,<br/>
-                link: document.getElementById('form-tese-link').value,<br/>
-                peca: document.getElementById('form-tese-peca').value,<br/>
-                tags: document.getElementById('form-tese-tags').value
+            const obj = {
+                id: id || Date.now().toString(),
+                codigo: document.getElementById('form-tese-codigo').value || 'TESE-000',
+                tema: document.getElementById('form-tese-tema').value || 'Geral',
+                titulo: document.getElementById('form-tese-titulo-input').value || 'Nova Tese',
+                peca: document.getElementById('form-tese-peca').value || 'Geral',
+                enunciado: document.getElementById('form-tese-enunciado').value || '',
+                fato: document.getElementById('form-tese-fato').value || '',
+                orientacao: document.getElementById('form-tese-orientacao').value || '',
+                fontes: document.getElementById('form-tese-fontes').value || '',
+                link: document.getElementById('form-tese-link').value || '',
+                tags: document.getElementById('form-tese-tags').value || ''
             };
-
-            if (id) {
-                const idx = dbTeses.findIndex(x => x.id === id);
-                dbTeses[idx] = tese;
-            } else {
-                dbTeses.push(tese);
-            }
-
-            salvarDados();
-            renderizarTeses();
-            atualizarFiltrosDinamicos();
-            fecharModalTese();
-            mostrarToast("Tese salva com sucesso!");
+            if (id) { const idx = dbTeses.findIndex(x => x.id === id); if(idx>=0) dbTeses[idx] = obj; }
+            else { dbTeses.push(obj); }
+            salvarDados(); atualizarFiltrosDinamicos(); renderTeses(); fecharModalTese();
+            mostrarToast("Tese salva!");
         }
 
         function editarTese(id) {
-            const t = dbTeses.find(x => x.id === id);
+            const t = dbTeses.find(x => x.id === id); if (!t) return;
             document.getElementById('modal-tese-titulo').textContent = "Editar Tese";
             document.getElementById('form-tese-id').value = t.id;
             document.getElementById('form-tese-codigo').value = t.codigo;
             document.getElementById('form-tese-tema').value = t.tema;
             document.getElementById('form-tese-titulo-input').value = t.titulo;
+            document.getElementById('form-tese-peca').value = t.peca || '';
             document.getElementById('form-tese-enunciado').value = t.enunciado;
             document.getElementById('form-tese-fato').value = t.fato;
             document.getElementById('form-tese-orientacao').value = t.orientacao;
             document.getElementById('form-tese-fontes').value = t.fontes;
-            document.getElementById('form-tese-link').value = t.link;
-            document.getElementById('form-tese-peca').value = t.peca || "";
+            document.getElementById('form-tese-link').value = t.link || '';
             document.getElementById('form-tese-tags').value = t.tags;
             document.getElementById('modal-tese').classList.remove('hidden');
         }
 
         function excluirTese(id) {
-            if (confirm("Excluir esta tese permanentemente?")) {
-                dbTeses = dbTeses.filter(x => x.id !== id);
-                salvarDados();
-                renderizarTeses();
-                atualizarFiltrosDinamicos();
-                mostrarToast("Tese removida.");
-            }
+            if (!confirm("Excluir?")) return;
+            dbTeses = dbTeses.filter(x => x.id !== id);
+            salvarDados(); atualizarFiltrosDinamicos(); renderTeses();
+            mostrarToast("Tese removida.");
         }
 
-        // --- ABA 3: SÚMULAS ---
-        function renderizarSumulas() {
-            const busca = document.getElementById('busca-sumula').value.toLowerCase();
-            const container = document.getElementById('lista-cards-sumulas');
-            const filtradas = dbSumulas.filter(s => s.numero.toString().includes(busca) || s.enunciado.toLowerCase().includes(busca));
+        function copiarTese(id) {
+            const t = dbTeses.find(x => x.id === id);
+            if (t) navigator.clipboard.writeText(t.titulo+'\n\nEnunciado: '+t.enunciado+'\n\nPrecedentes: '+t.fontes).then(() => mostrarToast("Copiado!"));
+        }
 
-            container.innerHTML = filtradas.map(s => `
-                <div class="bg-white border border-slate-200 rounded-xl shadow-sm p-4 flex flex-col gap-3 hover:shadow-md transition">
-                    <div class="flex justify-between items-center">
-                        <span class="bg-slate-100 text-slate-800 px-3 py-1 rounded-lg font-bold text-sm">Súmula ${s.numero}</span>
-                        <div class="flex gap-1">
-                            <button onclick="editarSumula('${s.id}')" class="text-slate-400 hover:text-slate-600 transition"><span class="material-icons text-sm">edit</span></button>
-                            <button onclick="excluirSumula('${s.id}')" class="text-slate-400 hover:text-red-500 transition"><span class="material-icons text-sm">delete</span></button>
-                        </div>
-                    </div>
-                    <p class="text-sm text-slate-700 leading-relaxed">${s.enunciado}</p>
-                    <div class="flex justify-end">
-                        <button onclick="copiarTexto('Súmula ${s.numero} do TSE: ${s.enunciado.replace(/'/g, "\'")}')" class="text-emerald-600 text-xs font-bold flex items-center gap-1 hover:underline">
-                            <span class="material-icons text-xs">content_copy</span> Copiar Citação
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+        function renderSumulas() {
+            const busca = document.getElementById('busca-sumula').value.toLowerCase();
+            const c = document.getElementById('lista-cards-sumulas'); c.innerHTML = '';
+            const f = dbSumulas.filter(s => s.numero.toString().includes(busca) || s.enunciado.toLowerCase().includes(busca));
+            f.forEach(s => {
+                const d = document.createElement('div');
+                d.className = "bg-white border border-slate-200 rounded-xl p-4 shadow-sm flex flex-col gap-3";
+                d.innerHTML = `<div class="flex justify-between items-center"><span class="bg-slate-100 text-slate-800 px-3 py-1 rounded-lg font-bold text-sm">Súmula ${s.numero}</span><div class="flex gap-1"><button onclick="editarSumula('${s.id}')" class="text-slate-400 hover:text-slate-600 p-1"><span class="material-icons text-sm">edit</span></button><button onclick="excluirSumula('${s.id}')" class="text-slate-400 hover:text-red-500 p-1"><span class="material-icons text-sm">delete</span></button></div></div><p class="text-sm text-slate-700">${s.enunciado}</p><div class="flex justify-end"><button onclick="copiarSumula('${s.id}')" class="text-emerald-600 hover:text-emerald-700 text-xs font-bold flex items-center gap-1 hover:underline"><span class="material-icons text-xs">content_copy</span> Copiar Citação</button></div>`;
+                c.appendChild(d);
+            });
         }
 
         function abrirModalSumula() {
             document.getElementById('modal-sumula-titulo').textContent = "Nova Súmula TSE";
-            document.getElementById('form-sumula-id').value = "";
-            document.getElementById('form-sumula-numero').value = "";
-            document.getElementById('form-sumula-enunciado').value = "";
+            document.getElementById('form-sumula-id').value = '';
+            document.getElementById('form-sumula-numero').value = '';
+            document.getElementById('form-sumula-enunciado').value = '';
             document.getElementById('modal-sumula').classList.remove('hidden');
         }
-
         function fecharModalSumula() { document.getElementById('modal-sumula').classList.add('hidden'); }
 
         function guardarSumula() {
             const id = document.getElementById('form-sumula-id').value;
-            const sumula = {
-                id: id || Date.now().toString(),<br/>
-                numero: document.getElementById('form-sumula-numero').value,<br/>
-                enunciado: document.getElementById('form-sumula-enunciado').value
-            };
-            if (id) {
-                const idx = dbSumulas.findIndex(x => x.id === id);
-                dbSumulas[idx] = sumula;
-            } else {
-                dbSumulas.push(sumula);
-            }
-            salvarDados();
-            renderizarSumulas();
-            fecharModalSumula();
-            mostrarToast("Súmula salva!");
+            const obj = { id: id || Date.now().toString(), numero: parseInt(document.getElementById('form-sumula-numero').value)||0, enunciado: document.getElementById('form-sumula-enunciado').value||'' };
+            if (id) { const idx = dbSumulas.findIndex(x => x.id === id); if(idx>=0) dbSumulas[idx] = obj; }
+            else { dbSumulas.push(obj); }
+            salvarDados(); renderSumulas(); fecharModalSumula(); mostrarToast("Súmula salva!");
         }
 
         function editarSumula(id) {
-            const s = dbSumulas.find(x => x.id === id);
+            const s = dbSumulas.find(x => x.id === id); if (!s) return;
             document.getElementById('modal-sumula-titulo').textContent = "Editar Súmula";
             document.getElementById('form-sumula-id').value = s.id;
             document.getElementById('form-sumula-numero').value = s.numero;
@@ -612,86 +491,66 @@
         }
 
         function excluirSumula(id) {
-            if (confirm("Excluir súmula?")) {
-                dbSumulas = dbSumulas.filter(x => x.id !== id);
-                salvarDados();
-                renderizarSumulas();
-                mostrarToast("Súmula removida.");
-            }
+            if (!confirm("Excluir?")) return;
+            dbSumulas = dbSumulas.filter(x => x.id !== id);
+            salvarDados(); renderSumulas(); mostrarToast("Súmula removida.");
         }
 
-        // --- IMPORT/EXPORT ---
-        function exportarJSON() {
-            const data = JSON.stringify({ teses: dbTeses, sumulas: dbSumulas }, null, 2);<br/>
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `backup_repositorio_dpu_${new Date().toISOString().split('T')[0]}.json`;
-            a.click();
+        function copiarSumula(id) {
+            const s = dbSumulas.find(x => x.id === id);
+            if (s) navigator.clipboard.writeText('Súmula '+s.numero+' do TSE: '+s.enunciado).then(() => mostrarToast("Copiado!"));
+        }
+
+        function importarPlanilha(e) {
+            const f = e.target.files[0]; if (!f) return;
+            const r = new FileReader();
+            r.onload = (ev) => {
+                try {
+                    const data = new Uint8Array(ev.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(ws);
+                    if (json.length) {
+                        dbTeses = json.map((x,i) => ({ id: (Date.now()+i).toString(), codigo: x.Código||x.codigo||'', tema: x.Tema||x.tema||'', peca: x.Peça||x.peca||'Geral', titulo: x.Título||x.titulo||'', enunciado: x.Enunciado||x.enunciado||'', fato: x.Destaque||x.fato||'', orientacao: x.Orientação||x.orientacao||'', fontes: x.Fontes||x.fontes||'', link: x.Link||x.link||'', tags: x.Tags||x.tags||'' }));
+                    }
+                    if (wb.SheetNames.length > 1) {
+                        const ws2 = wb.Sheets[wb.SheetNames[1]];
+                        const json2 = XLSX.utils.sheet_to_json(ws2);
+                        if (json2.length) dbSumulas = json2.map((x,i) => ({ id: (Date.now()+1000+i).toString(), numero: parseInt(x.Número||x.numero||0), enunciado: x.Enunciado||x.enunciado||'' }));
+                    }
+                    salvarDados(); atualizarFiltrosDinamicos(); renderTeses(); renderSumulas();
+                    mostrarToast("Importado!");
+                } catch(e) { mostrarToast("Erro.", true); }
+            };
+            r.readAsArrayBuffer(f);
         }
 
         function exportarPlanilha() {
             const wb = XLSX.utils.book_new();
-            const wsTeses = XLSX.utils.json_to_sheet(dbTeses.map(t => ({
-                Código: t.codigo, Tema: t.tema, Título: t.titulo, Enunciado: t.enunciado,<br/>
-                Destaque: t.fato, Orientação: t.orientacao, Fontes: t.fontes, Tags: t.tags,<br/>
-                Peça: t.peca || "Geral", Link: t.link
-            })));
-            const wsSumulas = XLSX.utils.json_to_sheet(dbSumulas.map(s => ({ Número: s.numero, Enunciado: s.enunciado })));
-            XLSX.utils.book_append_sheet(wb, wsTeses, "Teses");
-            XLSX.utils.book_append_sheet(wb, wsSumulas, "Súmulas");
-            XLSX.writeFile(wb, "repositorio_jurisprudencia_dpu.xlsx");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbTeses.map(t => ({Código:t.codigo,Tema:t.tema,Peça:t.peca,Título:t.titulo,Enunciado:t.enunciado,Destaque:t.fato,Orientação:t.orientacao,Fontes:t.fontes,Link:t.link,Tags:t.tags}))), "Teses");
+            XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(dbSumulas.map(s => ({Número:s.numero,Enunciado:s.enunciado}))), "Súmulas");
+            XLSX.writeFile(wb, "Repositorio_DPU.xlsx");
         }
 
-        function importarPlanilha(e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                const bstr = evt.target.result;
-                const wb = XLSX.read(bstr, { type: 'binary' });
-                
-                const wsT = wb.Sheets["Teses"];
-                if (wsT) {
-                    const json = XLSX.utils.sheet_to_json(wsT);
-                    dbTeses = json.map((t, i) => ({
-                        id: Date.now().toString() + i,<br/>
-                        codigo: t.Código || "", tema: t.Tema || "", titulo: t.Título || "",<br/>
-                        enunciado: t.Enunciado || "", fato: t.Destaque || "", orientacao: t.Orientação || "",<br/>
-                        fontes: t.Fontes || "", tags: t.Tags || "", peca: t.Peça || "Geral", link: t.Link || ""
-                    }));
-                }
-                
-                const wsS = wb.Sheets["Súmulas"];
-                if (wsS) {
-                    const jsonS = XLSX.utils.sheet_to_json(wsS);
-                    dbSumulas = jsonS.map((s, i) => ({
-                        id: (Date.now() + 1000).toString() + i,<br/>
-                        numero: s.Número || 0, enunciado: s.Enunciado || ""
-                    }));
-                }
-
-                salvarDados();
-                renderizarTeses();
-                renderizarSumulas();
-                atualizarFiltrosDinamicos();
-                mostrarToast("Planilha importada!");
-            };
-            reader.readAsBinaryString(file);
+        function exportarJSON() {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([JSON.stringify({teses:dbTeses,sumulas:dbSumulas},null,2)],{type:'application/json'}));
+            a.download = 'backup_dpu.json'; a.click();
         }
 
-        // --- INIT ---
+        const debouncedRenderAssuntos = debounce(renderAssuntos, 250);
+        const debouncedRenderTeses = debounce(renderTeses, 250);
+        const debouncedRenderSumulas = debounce(renderSumulas, 250);
+
         window.onload = () => {
-            carregarLocalStorage();
-            renderizarTribunais();
-            renderizarAssuntos();
-            renderizarTeses();
-            renderizarSumulas();
+            carregarDados();
+            document.getElementById('status-save').textContent = '✓ dados salvos';
+            document.getElementById('status-save').className = 'text-xs text-emerald-300';
+            renderTribunais();
+            renderAssuntos();
             atualizarFiltrosDinamicos();
-
-            document.getElementById('busca-assunto').addEventListener('input', debounce(renderizarAssuntos, 250));
-            document.getElementById('busca-tese').addEventListener('input', debounce(renderizarTeses, 250));
-            document.getElementById('busca-sumula').addEventListener('input', debounce(renderizarSumulas, 250));
+            renderTeses();
+            renderSumulas();
         };
     </script>
 </body>
